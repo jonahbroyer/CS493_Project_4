@@ -1,11 +1,14 @@
 const express = require('express')
 const morgan = require('morgan')
+const multer = require('multer')
 
 const api = require('./api')
 const { connectToDb } = require('./lib/mongo')
 
 const app = express()
 const port = process.env.PORT || 8000
+
+const upload = multer({ dest: `${__dirname}/uploads` });
 
 /*
  * Morgan is a popular logger.
