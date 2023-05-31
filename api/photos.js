@@ -8,6 +8,7 @@ const { validateAgainstSchema } = require('../lib/validation')
 const {
   PhotoSchema,
   savePhotoInfo,
+  savePhotoFile,
   insertNewPhoto,
   getPhotoById,
   getPhotoInfoById
@@ -34,7 +35,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         businessId: req.body.businessId,
         caption: req.body.caption
       }
-      const id = await savePhotoInfo(photo);
+      const id = await savePhotoFile(photo);
       res.status(201).send({
         id: id,
         links: {
