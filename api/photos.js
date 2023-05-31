@@ -89,6 +89,24 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-app.use('/media/photos', express.static(`${__dirname}/uploads`));
+// app.use('/media/photos', express.static(`${__dirname}/uploads`));
+
+/*
+ * GET /media/photos/{filename} - Route to fetch file data for photos
+ */
+router.get('/media/photos/:filename', (req, res, next) => {
+  getDownloadStreamByFilename(req.params.filename)
+    .on('error', (err) => {
+      if (err.code === 'ENOENT') {
+        next();
+      } else {
+        next(err);
+      }
+    })
+    .on('file', (file) => {
+      res.status(200).type(file.metadata.contentType);
+    })
+    .pipe(res);
+});
 
 module.exports = router
