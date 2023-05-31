@@ -3,7 +3,7 @@
  */
 const fs = require('fs');
 
-const { ObjectId } = require('mongodb')
+const { ObjectId, GridFSBucket } = require('mongodb')
 
 const { getDbReference } = require('../lib/mongo')
 const { extractValidFields } = require('../lib/validation')
@@ -52,6 +52,18 @@ exports.savePhotoFile = function (photo) {
   });
 };
 
+exports.removeUploadedFile = function (file) {
+  return new Promise((resolve, reject) => {
+    fs.unlink(file.path, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 /*
  * Executes a DB query to insert a new photo into the database.  Returns
  * a Promise that resolves to the ID of the newly-created photo entry.
@@ -88,12 +100,13 @@ exports.getPhotoById = getPhotoById
 
 exports.getPhotoInfoById = async function (id) {
   const db = getDBReference();
-  const collection = db.collection('photos');
+  // const collection = db.collection('photos');
+  const bucket = new GridFSBucket(db, { bucketName: 'photos' });
 
   if (!ObjectId.isValid(id)) {
     return null;
   } else {
-    const results = await collection
+    const results = await bucket
       .find({ _id: new ObjectId(id) })
       .toArray();
     return results[0];

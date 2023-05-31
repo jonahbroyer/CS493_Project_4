@@ -11,7 +11,8 @@ const {
   savePhotoFile,
   insertNewPhoto,
   getPhotoById,
-  getPhotoInfoById
+  getPhotoInfoById,
+  removeUploadedFile
 } = require('../models/photo')
 
 const { 
@@ -20,6 +21,8 @@ const {
 } = require('../server')
 
 const router = Router()
+
+
 
 /*
  * POST /photos - Route to create a new photo.
@@ -36,6 +39,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         caption: req.body.caption
       }
       const id = await savePhotoFile(photo);
+      await removeUploadedFile(req.file);
       res.status(201).send({
         id: id,
         links: {
