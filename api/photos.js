@@ -11,12 +11,17 @@ const {
   getPhotoById
 } = require('../models/photo')
 
+const { 
+  photoTypes,
+  upload
+} = require('../server')
+
 const router = Router()
 
 /*
  * POST /photos - Route to create a new photo.
  */
-router.post('/', async (req, res) => {
+router.post('/', upload.single('photo'), async (req, res) => {
   if (validateAgainstSchema(req.body, PhotoSchema)) {
     try {
       const id = await insertNewPhoto(req.body)

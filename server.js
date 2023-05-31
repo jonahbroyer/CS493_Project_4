@@ -13,6 +13,8 @@ const photoTypes = {
   'photo/jpeg': 'jpg',
   'photo/png': 'png'
 };
+exports.photoTypes = photoTypes
+
 const upload = multer({ 
   storage: multer.diskStorage({
     destination: `${__dirname}/uploads`,
@@ -27,6 +29,7 @@ const upload = multer({
     callback(null, !!photoTypes[file.mimetype]);
    }
 });
+exports.upload = upload
   
 
 /*
