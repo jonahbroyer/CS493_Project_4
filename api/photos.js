@@ -12,6 +12,7 @@ const {
   insertNewPhoto,
   getPhotoById,
   getPhotoInfoById,
+  getDownloadStreamByFilename,
   removeUploadedFile
 } = require('../models/photo')
 
