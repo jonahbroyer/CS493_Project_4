@@ -76,6 +76,6 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-app.use('/media/images', express.static(`${__dirname}/uploads`));
+app.use('/media/photos', express.static(`${__dirname}/uploads`));
 
 module.exports = router
