@@ -7,6 +7,7 @@ const { Router } = require('express')
 const { validateAgainstSchema } = require('../lib/validation')
 const {
   PhotoSchema,
+  savePhotoInfo,
   insertNewPhoto,
   getPhotoById
 } = require('../models/photo')
@@ -24,7 +25,15 @@ const router = Router()
 router.post('/', upload.single('photo'), async (req, res) => {
   if (validateAgainstSchema(req.body, PhotoSchema)) {
     try {
-      const id = await insertNewPhoto(req.body)
+      const photo = {
+        contentType: req.file.mimetype,
+        filename: req.file.filename,
+        path: req.file.path,
+        userId: req.body.userId,
+        businessId: req.body.businessId,
+        caption: req.body.caption
+      }
+      const id = await savePhotoInfo(photo);
       res.status(201).send({
         id: id,
         links: {
