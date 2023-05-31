@@ -72,7 +72,7 @@ router.get('/:id', async (req, res, next) => {
       // photo.url = `/media/photos/${photo.filename}`;
       const responseBody = {
         _id: photo._id,
-        url: `/media/photos/${photo.filename}`,
+        url: `/media/photos/${photo._id}.jpg` || `/media/photos/${photo._id}.png`,
         contentType: photo.metadata.contentType,
         userId: photo.metadata.userId,
         businessId: photo.metadata.businessId,
