@@ -112,3 +112,9 @@ exports.getPhotoInfoById = async function (id) {
     return results[0];
   }
 };
+
+exports.getDownloadStreamByFilename = function (filename) {
+  const db = getDBReference();
+  const bucket = new GridFSBucket(db, { bucketName: 'photos' });
+  return bucket.openDownloadStreamByName(filename);
+};
