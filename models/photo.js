@@ -1,6 +1,7 @@
 /*
  * Photo schema and data accessor methods.
  */
+const fs = require('fs');
 
 const { ObjectId } = require('mongodb')
 
@@ -21,6 +22,34 @@ exports.savePhotoInfo = async function (photo) {
   const collection = db.collection('photos');
   const result = await collection.insertOne(photo);
   return result.insertedId;
+};
+
+exports.savePhotoFile = function (photo) {
+  return new Promise((resolve, reject) => {
+    const db = getDBReference();
+    const bucket = new GridFSBucket(db, { bucketName: 'photos' });
+
+    const metadata = {
+      contentType: photo.contentType,
+      userId: photo.userId,
+      businessId: photo.businessId,
+      caption: photo.caption
+    };
+
+    const uploadStream = bucket.openUploadStream(
+      photo.filename,
+      { metadata: metadata }
+    );
+
+    fs.createReadStream(photo.path)
+      .pipe(uploadStream)
+      .on('error', (err) => {
+        reject(err);
+      })
+      .on('finish', (result) => {
+        resolve(result._id);
+      });
+  });
 };
 
 /*
