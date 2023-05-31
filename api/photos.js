@@ -2,14 +2,15 @@
  * API sub-router for businesses collection endpoints.
  */
 
-const { Router } = require('express')
+const { Router, application } = require('express')
 
 const { validateAgainstSchema } = require('../lib/validation')
 const {
   PhotoSchema,
   savePhotoInfo,
   insertNewPhoto,
-  getPhotoById
+  getPhotoById,
+  getPhotoInfoById
 } = require('../models/photo')
 
 const { 
@@ -59,9 +60,11 @@ router.post('/', upload.single('photo'), async (req, res) => {
  */
 router.get('/:id', async (req, res, next) => {
   try {
-    const photo = await getPhotoById(req.params.id)
+    const photo = await getPhotoInfoById(req.params.id);
     if (photo) {
-      res.status(200).send(photo)
+      delete photo.path;
+      photo.url = `/media/photos/${photo.filename}`;
+      res.status(200).send(photo);
     } else {
       next()
     }
@@ -72,5 +75,7 @@ router.get('/:id', async (req, res, next) => {
     })
   }
 })
+
+app.use('/media/images', express.static(`${__dirname}/uploads`));
 
 module.exports = router
