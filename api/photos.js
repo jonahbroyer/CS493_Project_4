@@ -67,9 +67,17 @@ router.get('/:id', async (req, res, next) => {
   try {
     const photo = await getPhotoInfoById(req.params.id);
     if (photo) {
-      delete photo.path;
-      photo.url = `/media/photos/${photo.filename}`;
-      res.status(200).send(photo);
+      // delete photo.path;
+      // photo.url = `/media/photos/${photo.filename}`;
+      const responseBody = {
+        _id: photo._id,
+        url: `/media/photos/${photo.filename}`,
+        contentType: photo.metadata.contentType,
+        userId: photo.metadata.userId,
+        businessId: photo.metadata.businessId,
+        caption: photo.metadata.caption
+      };
+      res.status(200).send(responseBody);
     } else {
       next()
     }
