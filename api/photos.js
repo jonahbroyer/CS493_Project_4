@@ -16,14 +16,14 @@ const {
   removeUploadedFile
 } = require('../models/photo')
 
+const { connectToRabbitMQ, getChannel } = require('./lib/rabbitmq');
+
 const { 
   photoTypes,
   upload
 } = require('../server')
 
 const router = Router()
-
-const amqp = require('amqplib');
 
 /*
  * POST /photos - Route to create a new photo.
