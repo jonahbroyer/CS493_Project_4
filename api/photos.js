@@ -23,7 +23,7 @@ const {
 
 const router = Router()
 
-
+const amqp = require('amqplib');
 
 /*
  * POST /photos - Route to create a new photo.
@@ -40,6 +40,8 @@ router.post('/', upload.single('photo'), async (req, res) => {
         caption: req.body.caption
       }
       const id = await savePhotoFile(photo);
+      const channel = getChannel();
+      channel.sendToQueue('photos', Buffer.from(id.toString()));
       await removeUploadedFile(req.file);
       res.status(201).send({
         id: id,
