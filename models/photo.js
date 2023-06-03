@@ -118,3 +118,27 @@ exports.getDownloadStreamByFilename = function (filename) {
   const bucket = new GridFSBucket(db, { bucketName: 'photos' });
   return bucket.openDownloadStreamByName(filename);
 };
+
+exports.getDownloadStreamById = function (id) {
+  const db = getDBReference();
+  const bucket = new GridFSBucket(db, { bucketName: 'photos' });
+  if (!ObjectId.isValid(id)) {
+    return null;
+  } else {
+    return bucket.openDownloadStream(new ObjectId(id));
+  }
+};
+
+exports.updatePhotoSizeById = async function (id, size) {
+  const db = getDBReference();
+  const collection = db.collection('photos.files');
+  if (!ObjectId.isValid(id)) {
+    return null;
+  } else {
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { "metadata.size": size }}
+    );
+    return result.matchedCount > 0;
+  }
+};
