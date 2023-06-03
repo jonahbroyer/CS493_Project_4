@@ -38,11 +38,13 @@ router.post('/', upload.single('photo'), async (req, res) => {
         userId: req.body.userId,
         businessId: req.body.businessId,
         caption: req.body.caption
-      }
+      };
       const id = await savePhotoFile(photo);
+      await removeUploadedFile(req.file);
+
       const channel = getChannel();
       channel.sendToQueue('photos', Buffer.from(id.toString()));
-      await removeUploadedFile(req.file);
+      
       res.status(201).send({
         id: id,
         links: {
