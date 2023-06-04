@@ -142,3 +142,44 @@ exports.updatePhotoSizeById = async function (id, size) {
     return result.matchedCount > 0;
   }
 };
+
+// Thumbnail functions
+exports.saveThumbFile = function (thumb) {
+  return new Promise((resolve, reject) => {
+    const db = getDBReference();
+    const bucket = new GridFSBucket(db, { bucketName: 'thumbs' });
+
+    const metadata = {
+      contentType: 'image/jpeg'
+    };
+
+    const uploadStream = bucket.openUploadStream(
+      thumb.filename,
+      { metadata: metadata }
+    );
+
+    fs.createReadStream(thumb.path)
+      .pipe(uploadStream)
+      .on('error', (err) => {
+        reject(err);
+      })
+      .on('finish', (result) => {
+        resolve(result._id);
+      });
+  });
+};
+
+exports.getThumbInfoById = async function (id) {
+  const db = getDBReference();
+  // const collection = db.collection('photos');
+  const bucket = new GridFSBucket(db, { bucketName: 'thumbs' });
+
+  if (!ObjectId.isValid(id)) {
+    return null;
+  } else {
+    const results = await bucket
+      .find({ _id: new ObjectId(id) })
+      .toArray();
+    return results[0];
+  }
+};
