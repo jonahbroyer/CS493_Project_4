@@ -16,6 +16,11 @@ const {
   removeUploadedFile
 } = require('../models/photo')
 
+const {
+  saveThumbFile,
+  getThumbInfoById
+}
+
 const { connectToRabbitMQ, getChannel } = require('./lib/rabbitmq');
 
 const { 
@@ -114,5 +119,29 @@ router.get('/media/photos/:filename', (req, res, next) => {
     })
     .pipe(res);
 });
+
+/*
+ * GET /photos/thumbs/{id} - Route to fetch info about a specific thumbnail.
+ */
+router.get('/thumbs/:id', async (req, res, next) => {
+  try {
+    const thumb = await getThumbInfoById(req.params.id)
+    if (thumb) {
+      delete thumb.path;
+      const responseBody = {
+        _id: thumb._id,
+        url: `/photos/media/thumbs/${thumb.filename}`
+      }
+      res.status(200).send(responseBody)
+    } else {
+      next()
+    }
+  } catch (err) {
+    console.error(err)
+    res.status(500).send({
+      error: "Unable to fetch thumbnail.  Please try again later."
+    })
+  }
+})
 
 module.exports = router
