@@ -44,7 +44,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
 
       const channel = getChannel();
       channel.sendToQueue('photos', Buffer.from(id.toString()));
-      
+
       res.status(201).send({
         id: id,
         links: {
@@ -80,7 +80,8 @@ router.get('/:id', async (req, res, next) => {
         contentType: photo.metadata.contentType,
         userId: photo.metadata.userId,
         businessId: photo.metadata.businessId,
-        caption: photo.metadata.caption
+        caption: photo.metadata.caption,
+        size: photo.metadata.size
       };
       res.status(200).send(responseBody);
     } else {
