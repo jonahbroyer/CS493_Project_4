@@ -13,13 +13,11 @@ const {
   getPhotoById,
   getPhotoInfoById,
   getDownloadStreamByFilename,
-  removeUploadedFile
-} = require('../models/photo')
-
-const {
+  removeUploadedFile,
   saveThumbFile,
-  getThumbInfoById
-}
+  getThumbInfoById,
+  getThumbDownloadStreamByFilename
+} = require('../models/photo')
 
 const { connectToRabbitMQ, getChannel } = require('./lib/rabbitmq');
 
@@ -142,6 +140,24 @@ router.get('/thumbs/:id', async (req, res, next) => {
       error: "Unable to fetch thumbnail.  Please try again later."
     })
   }
-})
+});
+
+/*
+ * GET /media/thumbs/{filename} - Route to fetch file data for thumbnails.
+ */
+router.get('/media/thumbs/:filename', (req, res, next) => {
+  getThumbDownloadStreamByFilename(req.params.filename)
+    .on('error', (err) => {
+      if (err.code === 'ENOENT') {
+        next();
+      } else {
+        next(err);
+      }
+    })
+    .on('file', (file) => {
+      res.status(200).type(file.metadata.contentType);
+    })
+    .pipe(res);
+});
 
 module.exports = router

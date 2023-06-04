@@ -181,3 +181,9 @@ exports.getThumbInfoById = async function (id) {
     return results[0];
   }
 };
+
+exports.getThumbDownloadStreamByFilename = function (filename) {
+  const db = getDBReference();
+  const bucket = new GridFSBucket(db, { bucketName: 'thumbs' });
+  return bucket.openDownloadStreamByName(filename);
+};
