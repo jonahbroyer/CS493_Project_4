@@ -2,6 +2,7 @@
  * Photo schema and data accessor methods.
  */
 const fs = require('fs');
+const Jimp = require('node:fs')
 
 const { ObjectId, GridFSBucket } = require('mongodb')
 
