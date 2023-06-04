@@ -2,7 +2,6 @@
  * Photo schema and data accessor methods.
  */
 const fs = require('fs');
-const Jimp = require('node:fs')
 
 const { ObjectId, GridFSBucket } = require('mongodb')
 
@@ -101,7 +100,6 @@ exports.getPhotoById = getPhotoById
 
 exports.getPhotoInfoById = async function (id) {
   const db = getDBReference();
-  // const collection = db.collection('photos');
   const bucket = new GridFSBucket(db, { bucketName: 'photos' });
 
   if (!ObjectId.isValid(id)) {
@@ -172,7 +170,6 @@ exports.saveThumbFile = function (thumb) {
 
 exports.getThumbInfoById = async function (id) {
   const db = getDBReference();
-  // const collection = db.collection('photos');
   const bucket = new GridFSBucket(db, { bucketName: 'thumbs' });
 
   if (!ObjectId.isValid(id)) {
